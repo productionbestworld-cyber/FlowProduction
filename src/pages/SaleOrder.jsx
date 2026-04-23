@@ -166,6 +166,17 @@ export default function SaleOrder() {
 
   const unitOptions = ['กิโลกรัม', 'เมตร', 'ม้วน', 'ชิ้น', 'ใบ', 'แผ่น'];
 
+  const cleanProductName = (rawName) => {
+    if (!rawName) return '';
+    if (rawName.includes('","') || rawName.includes('",""')) {
+      const parts = rawName.split('","').map(s => s.replace(/["']/g, '').replace(/^,|,$/g, '').trim()).filter(Boolean);
+      const validParts = parts.filter(p => p !== 'หมายเหตุ' && p !== 'ขาย' && p !== 'ย่อย' && p !== 'Kg.');
+      const longest = validParts.reduce((a, b) => a.length > b.length ? a : b, "");
+      return longest || rawName;
+    }
+    return rawName;
+  };
+
   const handleItemSelect = (itemCode) => {
     const product = products.find(p => p.code === itemCode);
     if (product) {
@@ -192,7 +203,7 @@ export default function SaleOrder() {
       setNewOrder(prev => ({
         ...prev,
         itemCode: itemCode,
-        partName: product.name || '',
+        partName: cleanProductName(product.name),
         width: extractedWidth || '',
         thickness: extractedThickness || '',
         matCode: product.mat_code || product.matCode || '',
@@ -559,7 +570,13 @@ export default function SaleOrder() {
                      </div>
                      <SearchableSelect 
                        placeholder="เลือกไอเทมโค้ด..."
-                       options={products.map(p => ({ label: p.name, value: p.code }))}
+                       options={products.map(p => {
+                         const cleanName = cleanProductName(p.name);
+                         return { 
+                           label: p.code ? `[${p.code}] ${cleanName}` : cleanName, 
+                           value: p.code 
+                         };
+                       })}
                        value={newOrder.itemCode}
                        onChange={handleItemSelect}
                        icon={Hash}
