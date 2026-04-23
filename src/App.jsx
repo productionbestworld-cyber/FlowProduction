@@ -11,6 +11,8 @@ import PrintingData from './pages/PrintingData';
 import WarehouseReq from './pages/WarehouseReq';
 import Sales from './pages/Sales';
 import Billing from './pages/Billing';
+import Customers from './pages/Customers';
+import Products from './pages/Products';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
               <Route path="warehouse" element={<WarehouseReq />} />
               <Route path="sales" element={<Sales />} />
               <Route path="billing" element={<Billing />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="products" element={<Products />} />
             </Route>
           </Routes>
         </BrowserRouter>

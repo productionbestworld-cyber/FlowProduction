@@ -122,6 +122,76 @@ export function StoreProvider({ children }) {
     return true;
   };
 
+  // --- Customer CRUD ---
+  const addCustomer = async (customer) => {
+    const { data, error } = await supabase.from('customers').insert([customer]).select();
+    if (error) {
+      alert(`Error adding customer: ${error.message}`);
+      return false;
+    }
+    if (data) setCustomers(prev => [data[0], ...prev]);
+    return true;
+  };
+
+  const updateCustomer = async (id, updates) => {
+    const { data, error } = await supabase.from('customers').update(updates).eq('id', id).select();
+    if (error) {
+      alert(`Error updating customer: ${error.message}`);
+      return false;
+    }
+    if (data) {
+      setCustomers(prev => prev.map(c => c.id === id ? { ...c, ...data[0] } : c));
+      return true;
+    }
+    return false;
+  };
+
+  const deleteCustomer = async (id) => {
+    if(!window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบลูกค้ารายนี้?')) return false;
+    const { error } = await supabase.from('customers').delete().eq('id', id);
+    if (error) {
+      alert(`Error deleting customer: ${error.message}`);
+      return false;
+    }
+    setCustomers(prev => prev.filter(c => c.id !== id));
+    return true;
+  };
+
+  // --- Product CRUD ---
+  const addProduct = async (product) => {
+    const { data, error } = await supabase.from('products').insert([product]).select();
+    if (error) {
+      alert(`Error adding product: ${error.message}`);
+      return false;
+    }
+    if (data) setProducts(prev => [data[0], ...prev]);
+    return true;
+  };
+
+  const updateProduct = async (id, updates) => {
+    const { data, error } = await supabase.from('products').update(updates).eq('id', id).select();
+    if (error) {
+      alert(`Error updating product: ${error.message}`);
+      return false;
+    }
+    if (data) {
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, ...data[0] } : p));
+      return true;
+    }
+    return false;
+  };
+
+  const deleteProduct = async (id) => {
+    if(!window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้ารายการนี้?')) return false;
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (error) {
+      alert(`Error deleting product: ${error.message}`);
+      return false;
+    }
+    setProducts(prev => prev.filter(p => p.id !== id));
+    return true;
+  };
+
   const approveSO = async (soId) => {
     const { error } = await supabase.from('sales_orders').update({ status: 'In Planning' }).eq('id', soId);
     if (!error) {
@@ -288,6 +358,12 @@ export function StoreProvider({ children }) {
       addSaleOrder,
       updateSaleOrder,
       deleteSaleOrder,
+      addCustomer,
+      updateCustomer,
+      deleteCustomer,
+      addProduct,
+      updateProduct,
+      deleteProduct,
       approveSO,
       updatePlan,
       deletePlan,

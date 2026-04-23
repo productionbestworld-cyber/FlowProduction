@@ -15,6 +15,8 @@ import {
   ChevronRight,
   ShoppingBag,
   User,
+  Users,
+  Package,
   Sun,
   Moon,
   Menu
@@ -29,6 +31,8 @@ const menuItems = [
   { path: '/warehouse', name: 'Warehouse (Stock)', icon: Warehouse },
   { path: '/sales', name: 'Sales (Withdraw)', icon: ShoppingBag },
   { path: '/billing', name: 'Billing & Invoice', icon: FileCheck },
+  { path: '/customers', name: 'Customers', icon: Users },
+  { path: '/products', name: 'Products', icon: Package },
 ];
 
 export default function MainLayout() {
