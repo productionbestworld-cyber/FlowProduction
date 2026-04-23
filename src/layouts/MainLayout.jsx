@@ -117,10 +117,7 @@ export default function MainLayout() {
               >
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
-              <button className="w-11 h-11 bg-white/30 dark:bg-white/[0.03] border border-white/40 dark:border-white/[0.05] rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/[0.06] transition-all relative group">
-                <Bell size={20} className="group-hover:rotate-12 transition-transform" />
-                <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-[#0a0c12]" />
-              </button>
+
               <button className="w-11 h-11 bg-white/30 dark:bg-white/[0.03] border border-white/40 dark:border-white/[0.05] rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/[0.06] transition-all group">
                 <Settings size={20} className="group-hover:rotate-45 transition-transform duration-500" />
               </button>
