@@ -36,6 +36,7 @@ const menuItems = [
   { path: '/products', name: 'Products', icon: Package },
 ];
 
+/* Hook: returns true when viewport < 1024px */
 function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(() => 
     typeof window !== 'undefined' ? window.innerWidth < 1024 : false
@@ -55,18 +56,26 @@ export default function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(!isMobile);
   const location = useLocation();
 
+  /* Auto-close sidebar on route change (mobile) */
   React.useEffect(() => {
     if (isMobile) setIsSidebarOpen(false);
   }, [location.pathname, isMobile]);
 
+  /* Sync sidebar state when switching between mobile / desktop */
   React.useEffect(() => {
     setIsSidebarOpen(!isMobile);
   }, [isMobile]);
 
+  const sidebarClasses = isMobile 
+    ? `fixed top-0 left-0 h-full w-72 z-50 glass-panel rounded-r-3xl shadow-2xl transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
+    : `${isSidebarOpen ? 'w-72' : 'w-20'} relative z-20 shrink-0 transition-all duration-500`;
+
   return (
     <div className="flex h-screen w-full overflow-hidden p-2 sm:p-4 lg:p-6 transition-colors duration-700">
+      {/* Outer wrapper that acts as the huge frosted glass pane */}
       <div className="flex w-full h-full glass-panel overflow-hidden rounded-2xl sm:rounded-[2rem] lg:rounded-[2.5rem]">
         
+        {/* Mobile backdrop */}
         {isMobile && isSidebarOpen && (
           <div 
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity"
@@ -74,13 +83,8 @@ export default function MainLayout() {
           />
         )}
 
-        <aside className={`
-          ${isMobile 
-            ? \`fixed top-0 left-0 h-full w-72 z-50 glass-panel rounded-r-3xl shadow-2xl transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}\`
-            : \`${isSidebarOpen ? 'w-72' : 'w-20'} relative z-20 shrink-0 transition-all duration-500\`
-          }
-          border-r border-white/10 flex flex-col
-        `}>
+        {/* Sidebar */}
+        <aside className={`${sidebarClasses} border-r border-white/10 flex flex-col`}>
           <div className="p-4 sm:p-6 lg:p-8">
             <div className={`flex items-center ${(!isMobile && !isSidebarOpen) ? 'justify-center' : 'gap-4 px-2'} transition-all duration-500`}>
               <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-xl sm:rounded-[1.2rem] flex items-center justify-center shadow-xl shadow-blue-500/20">
@@ -90,6 +94,7 @@ export default function MainLayout() {
                 <h1 className="font-semibold text-lg sm:text-xl tracking-tight text-slate-800 dark:text-white whitespace-nowrap">FACTORY OS</h1>
                 <p className="text-[10px] text-slate-500 font-medium uppercase tracking-[0.2em] -mt-1 whitespace-nowrap">BWP Premium</p>
               </div>
+              {/* Close button (mobile only) */}
               {isMobile && (
                 <button 
                   onClick={() => setIsSidebarOpen(false)} 
@@ -107,12 +112,12 @@ export default function MainLayout() {
               key={item.path} 
               to={item.path}
               title={(!isMobile && !isSidebarOpen) ? item.name : undefined}
-              className={({ isActive }) => \`
+              className={({ isActive }) => `
                 group flex items-center ${(!isMobile && !isSidebarOpen) ? 'justify-center px-0' : 'gap-3 sm:gap-4 px-4 sm:px-6'} py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-all duration-500
                 ${isActive 
-                  ? \`bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 ${(!isMobile && !isSidebarOpen) ? '' : 'translate-x-1 sm:translate-x-2'}\` 
-                  : \`text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-500/5 dark:hover:bg-white/5 ${(!isMobile && !isSidebarOpen) ? '' : 'hover:translate-x-1'}\`}
-              \` }
+                  ? `bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 ${(!isMobile && !isSidebarOpen) ? '' : 'translate-x-1 sm:translate-x-2'}` 
+                  : `text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-500/5 dark:hover:bg-white/5 ${(!isMobile && !isSidebarOpen) ? '' : 'hover:translate-x-1'}`}
+              `}
             >
               {({ isActive }) => (
                 <>
@@ -137,7 +142,10 @@ export default function MainLayout() {
         </div>
       </aside>
 
+      {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 relative overflow-hidden">
+
+        {/* Top Header */}
         <header className="h-14 sm:h-20 lg:h-24 border-b border-white/10 flex items-center justify-between px-3 sm:px-6 lg:px-10 z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-5">
             <button 
@@ -151,6 +159,7 @@ export default function MainLayout() {
               <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
               <span className="text-[10px] font-semibold dark:font-medium uppercase tracking-widest text-slate-600 dark:text-slate-400">System Live</span>
             </div>
+            {/* Compact live dot for mobile */}
             <div className="sm:hidden h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
           </div>
           
@@ -162,11 +171,14 @@ export default function MainLayout() {
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               </button>
+
               <button className="hidden sm:flex w-11 h-11 bg-white/30 dark:bg-white/[0.03] border border-white/40 dark:border-white/[0.05] rounded-xl items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/[0.06] transition-all group">
                 <Settings size={20} className="group-hover:rotate-45 transition-transform duration-500" />
               </button>
             </div>
+
             <div className="hidden sm:block h-10 w-px bg-white/20 dark:bg-white/[0.05]" />
+            
             <div className="flex items-center gap-2 sm:gap-4 cursor-pointer group">
               <div className="text-right hidden lg:block">
                 <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">Admin User</p>
@@ -181,12 +193,14 @@ export default function MainLayout() {
           </div>
         </header>
 
+        {/* Page Content */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 custom-scrollbar z-0 relative">
           <div className="max-w-[1600px] mx-auto">
              <Outlet />
           </div>
         </div>
       </main>
+      </div>
     </div>
   );
 }
